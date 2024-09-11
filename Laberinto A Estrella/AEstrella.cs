@@ -11,7 +11,7 @@ namespace Laberinto_A_Estrella
         readonly int _ancho; //dimensiones tablero
         readonly int _alto; //dimensiones tablero
 
-        readonly Nodo[,] _nodos;
+        internal readonly Nodo[,] _nodos;
 
         public AEstrella(int ancho, int alto, bool[,] mapa)
         {
@@ -87,7 +87,47 @@ namespace Laberinto_A_Estrella
             //origen.G: Costo de la distancia.
             origen.G = 0; //distancia a la que esta el origen del origen.
             origen.H = Heuristica(origen, meta);
+            
+            while(abiertos.Count > 0) {
+                var actual = abiertos.OrderBy(x => x.F).First();
 
+                if(actual == meta)
+                {
+                    var ruta = new List<Nodo>(); //Lista de la meta hasta el origen.
+                    while(ruta != null)
+                    {
+                        ruta.Add(actual);
+                        actual = actual.Padre; 
+                    }
+                    ruta.Reverse();
+                    return ruta;
+                }
+                abiertos.Remove(actual);
+                cerrados.Add(actual);
+                var suecesores = GenerarSucesores(actual);
+                foreach (var sucesor in suecesores)
+                {
+                    if (sucesor.Bloqueada || cerrados.Contains(sucesor))
+                    {
+                        continue;
+                    }
+                    int g = actual.G + 1;
+
+                    if(g < sucesor.G || abiertos.Contains(sucesor))
+                    {
+                        sucesor.G = g; //camino mas corto.
+                        sucesor.H = Heuristica(sucesor, meta);
+                        sucesor.Padre = actual;
+
+                        if (!abiertos.Contains(sucesor))
+                        {
+                            abiertos.Add(sucesor);
+                        }
+                    }
+                }
+
+            }
+            return null;
         }
     }
 }
