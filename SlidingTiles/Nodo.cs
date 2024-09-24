@@ -58,8 +58,37 @@ namespace SlidingTiles
 
                 //Hacer el intercambio
                 //f-1,c
-
+                
+                //intercambio posicion de abajo.
+               
 			}
+		}
+
+        public void Euristica(Nodo a)
+        {
+            byte[,] estado = new byte[,] { { 5, 4, 7 }, { 2, 3, 1 }, { 8, 2, 0 } };
+
+            Dictionary<byte, byte[]> meta = new Dictionary<byte, byte[]>();
+            meta[1] = new byte[] { 0, 0 };
+			meta[2] = new byte[] { 0, 1 };
+			meta[3] = new byte[] { 0, 2 };
+			meta[4] = new byte[] { 1, 0 };
+			meta[5] = new byte[] { 1, 1 };
+			meta[6] = new byte[] { 1, 2 };
+			meta[7] = new byte[] { 2, 0 };
+			meta[8] = new byte[] { 2, 1 };
+			meta[0] = new byte[] { 2, 2 };
+
+            int resultado=0;
+            //suma de distancias
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    var posicion = meta[estado[i, j]];
+                    resultado += Math.Abs(i - posicion[0]) + Math.Abs(j - posicion[1]);
+                }
+            }
 		}
     }
 }
