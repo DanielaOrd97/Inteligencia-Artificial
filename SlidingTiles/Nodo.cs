@@ -23,45 +23,108 @@ namespace SlidingTiles
         public List<Nodo> GenerarSucesores(Nodo actual)
         {
             //encontrar el 0.
-            int f; //fila
-            int c; //columna
+            int f = -1; //fila
+            int c = -1; //columna
+			bool encontrado = false;
 
-            for (f = 0;  f < 3; f++)
-            {
-                for (c = 0; c < 3; c++)
-                {
-                    if (actual.Tablero[f,c] == 0)
-                    {
-                        break;
-                    }
-                }
-            }
+			//for (f = 0;  f < 3; f++)
+			//{
+			//    for (c = 0; c < 3; c++)
+			//    {
+			//        if (actual.Tablero[f,c] == 0)
+			//        {
+			//            break;
+			//        }
+			//    }
+			//}
 
-			//Generacion de sucesores, despues de encontrar el 0.
-			List<Nodo> sucesores = new();
+			for (int i = 0; i < 3 && !encontrado; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					if (actual.Tablero[i, j] == 0)
+					{
+						f = i;
+						c = j;
+						encontrado = true;
+						break;
+					}
+				}
+			}
+
+		    //Generacion de sucesores, despues de encontrar el 0.
+		    List<Nodo> sucesores = new();
 
             //crear los nuevos nodos y agregarlos a la lista.
             if(f > 0) //verificar el intercambio con la posicion de arriba
             {
                 Nodo nuevo = new();
-
-                //nuevo.Tablero = new(byte[3,3]);
-
+                nuevo.Tablero = new byte[3,3];
 				for (int i = 0; i < 3; i++)
 				{
 					for (int j = 0; j < 3; j++)
 					{
-                        //nuevo.Tablero[i, j];
-                        //actual.Tablero[i, j];
+                        nuevo.Tablero[i, j] = actual.Tablero[i, j];
 					}
 				}
 
-                //Hacer el intercambio
-                //f-1,c
-                
-                //intercambio posicion de abajo.
-               
+				//Hacer el intercambio
+				//f-1,c
+				nuevo.Tablero[f, c] = actual.Tablero[f - 1, c];  // Mover el valor de arriba hacia la posición del 0
+				nuevo.Tablero[f - 1, c] = 0; // Colocar el 0 en la posición de arriba.
+				sucesores.Add(nuevo);
 			}
+
+			if(f < 2)
+			{
+				Nodo nuevo = new();
+				nuevo.Tablero = new byte[3, 3];
+				for (int i = 0; i < 3; i++)
+				{
+					for (int j = 0; j < 3; j++)
+					{
+						nuevo.Tablero[i, j] = actual.Tablero[i, j];
+					}
+				}
+
+				nuevo.Tablero[f, c] = actual.Tablero[f + 1, c]; // Mover el valor de abajo hacia la posición del 0
+				nuevo.Tablero[f + 1, c] = 0; // Colocar el 0 en la posición de abajo
+				sucesores.Add(nuevo);
+			}
+
+			if(c > 0)
+			{
+				Nodo nuevo = new();
+				nuevo.Tablero = new byte[3, 3];
+				for (int i = 0; i < 3; i++)
+				{
+					for (int j = 0; j < 3; j++)
+					{
+						nuevo.Tablero[i, j] = actual.Tablero[i, j];
+					}
+				}
+				nuevo.Tablero[f, c] = actual.Tablero[f, c - 1];
+				nuevo.Tablero[f, c - 1] = 0;
+				sucesores.Add(nuevo);
+			}
+
+			if(c < 2)
+			{
+				Nodo nuevo = new();
+				nuevo.Tablero = new byte[3, 3];
+				for (int i = 0; i < 3; i++)
+				{
+					for (int j = 0; j < 3; j++)
+					{
+						nuevo.Tablero[i, j] = actual.Tablero[i, j];
+					}
+				}
+				nuevo.Tablero[f, c] = actual.Tablero[f, c + 1];
+				nuevo.Tablero[f, c + 1] = 0;
+				sucesores.Add(nuevo);
+			}
+
+			return sucesores;
 		}
 
         public void Euristica(Nodo a)
@@ -89,6 +152,13 @@ namespace SlidingTiles
                     resultado += Math.Abs(i - posicion[0]) + Math.Abs(j - posicion[1]);
                 }
             }
+
+			//interpolar
+			//$"{Estado[0,0]}{Estado[0,0]}"
+
+
 		}
-    }
+
+
+	}
 }
