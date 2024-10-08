@@ -19,115 +19,105 @@ namespace SlidingTiles
 
         public byte[,] Tablero;
 
+		public List<Nodo> GenerarSucesores(Nodo actual)
+		{
+			int fila = 0;
+			int columna = 0;
 
-        public List<Nodo> GenerarSucesores(Nodo actual)
-        {
-            //encontrar el 0.
-            int f = -1; //fila
-            int c = -1; //columna
-			bool encontrado = false;
-
-			//for (f = 0;  f < 3; f++)
-			//{
-			//    for (c = 0; c < 3; c++)
-			//    {
-			//        if (actual.Tablero[f,c] == 0)
-			//        {
-			//            break;
-			//        }
-			//    }
-			//}
-
-			for (int i = 0; i < 3 && !encontrado; i++)
+			//recorrer mariz para encontrar la posicion del 0
+			for (int f = 0; f < 3; f++)
 			{
-				for (int j = 0; j < 3; j++)
+				for (int c = 0; c < 3; c++)
 				{
-					if (actual.Tablero[i, j] == 0)
+					if (actual.Tablero[f, c] == 0) // si se encuentra el 0
 					{
-						f = i;
-						c = j;
-						encontrado = true;
-						break;
+						fila = f;   //se guarda la fila donde se encuentra
+						columna = c;  // se guarda la columna donde se encuentra
+						break; 
 					}
 				}
 			}
 
-		    //Generacion de sucesores, despues de encontrar el 0.
-		    List<Nodo> sucesores = new();
+			List<Nodo> sucesores = new List<Nodo>();
 
-            //crear los nuevos nodos y agregarlos a la lista.
-            if(f > 0) //verificar el intercambio con la posicion de arriba
-            {
-                Nodo nuevo = new();
-                nuevo.Tablero = new byte[3,3];
-				for (int i = 0; i < 3; i++)
-				{
-					for (int j = 0; j < 3; j++)
-					{
-                        nuevo.Tablero[i, j] = actual.Tablero[i, j];
-					}
-				}
-
-				//Hacer el intercambio
-				//f-1,c
-				nuevo.Tablero[f, c] = actual.Tablero[f - 1, c];  // Mover el valor de arriba hacia la posición del 0
-				nuevo.Tablero[f - 1, c] = 0; // Colocar el 0 en la posición de arriba.
-				sucesores.Add(nuevo);
-			}
-
-			if(f < 2)
+			if (fila > 0)
 			{
 				Nodo nuevo = new();
 				nuevo.Tablero = new byte[3, 3];
-				for (int i = 0; i < 3; i++)
+
+				for (int f = 0; f < 3; f++)
 				{
-					for (int j = 0; j < 3; j++)
+					for (int c = 0; c < 3; c++)
 					{
-						nuevo.Tablero[i, j] = actual.Tablero[i, j];
+						nuevo.Tablero[f, c] = actual.Tablero[f, c];
 					}
 				}
 
-				nuevo.Tablero[f, c] = actual.Tablero[f + 1, c]; // Mover el valor de abajo hacia la posición del 0
-				nuevo.Tablero[f + 1, c] = 0; // Colocar el 0 en la posición de abajo
+				nuevo.Tablero[fila, columna] = actual.Tablero[fila - 1, columna]; // se asigna el numero de arriba a la posicion actual.
+				nuevo.Tablero[fila - 1, columna] = 0; // la posicion de arriba queda vacia asi que se le asigna el 0.
 				sucesores.Add(nuevo);
 			}
 
-			if(c > 0)
+			if (fila < 2)
 			{
 				Nodo nuevo = new();
 				nuevo.Tablero = new byte[3, 3];
-				for (int i = 0; i < 3; i++)
+
+				for (int f = 0; f < 3; f++)
 				{
-					for (int j = 0; j < 3; j++)
+					for (int c = 0; c < 3; c++)
 					{
-						nuevo.Tablero[i, j] = actual.Tablero[i, j];
+						nuevo.Tablero[f, c] = actual.Tablero[f, c];
 					}
 				}
-				nuevo.Tablero[f, c] = actual.Tablero[f, c - 1];
-				nuevo.Tablero[f, c - 1] = 0;
+
+				nuevo.Tablero[fila, columna] = actual.Tablero[fila + 1, columna]; // se asigna el numero de abajo a la posicion actual.
+				nuevo.Tablero[fila + 1, columna] = 0;  // la posicion de abajo queda vacia asi que se le asigna el 0.
 				sucesores.Add(nuevo);
 			}
 
-			if(c < 2)
+			if (columna > 0)
 			{
 				Nodo nuevo = new();
 				nuevo.Tablero = new byte[3, 3];
-				for (int i = 0; i < 3; i++)
+
+				for (int f = 0; f < 3; f++)
 				{
-					for (int j = 0; j < 3; j++)
+					for (int c = 0; c < 3; c++)
 					{
-						nuevo.Tablero[i, j] = actual.Tablero[i, j];
+						nuevo.Tablero[f, c] = actual.Tablero[f, c];
 					}
 				}
-				nuevo.Tablero[f, c] = actual.Tablero[f, c + 1];
-				nuevo.Tablero[f, c + 1] = 0;
+
+				nuevo.Tablero[fila, columna] = actual.Tablero[fila, columna - 1]; // se asigna el numero de la izq a la posicion actual.
+				nuevo.Tablero[fila, columna - 1] = 0; // la posicion de la izq queda vacia asi que se le asigna el 0.
+				sucesores.Add(nuevo);
+			}
+
+			if (columna < 2)
+			{
+				Nodo nuevo = new();
+				nuevo.Tablero = new byte[3, 3];
+
+				for (int f = 0; f < 3; f++)
+				{
+					for (int c = 0; c < 3; c++)
+					{
+						nuevo.Tablero[f, c] = actual.Tablero[f, c];
+					}
+				}
+
+				nuevo.Tablero[fila, columna] = actual.Tablero[fila, columna + 1]; // se asigna el numero de la derecha a la posicion actual.
+				nuevo.Tablero[fila, columna + 1] = 0; // la posicion de la derecha queda vacia asi que se le asigna el 0.
 				sucesores.Add(nuevo);
 			}
 
 			return sucesores;
 		}
 
-        public void Euristica(Nodo a)
+
+
+		public void Euristica(Nodo a)
         {
             byte[,] estado = new byte[,] { { 5, 4, 7 }, { 2, 3, 1 }, { 8, 2, 0 } };
 
@@ -152,13 +142,21 @@ namespace SlidingTiles
                     resultado += Math.Abs(i - posicion[0]) + Math.Abs(j - posicion[1]);
                 }
             }
-
-			//interpolar
-			//$"{Estado[0,0]}{Estado[0,0]}"
-
-
 		}
 
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+//interpolar
+//$"{Estado[0,0]}{Estado[0,0]}"
