@@ -15,7 +15,7 @@ namespace SlidingTiles
 		{
             get { return G + H; }
         }
-        public Nodo? Padre { get; set; }
+        public Nodo? Padre { get; set; } 
 
         public byte[,] Tablero;
 
@@ -117,9 +117,9 @@ namespace SlidingTiles
 
 
 
-		public void Euristica(Nodo a)
+		public int Euristica(Nodo a)
         {
-            byte[,] estado = new byte[,] { { 5, 4, 7 }, { 2, 3, 1 }, { 8, 2, 0 } };
+            //byte[,] estado = new byte[,] { { 5, 4, 7 }, { 2, 3, 1 }, { 8, 2, 0 } };
 
             Dictionary<byte, byte[]> meta = new Dictionary<byte, byte[]>();
             meta[1] = new byte[] { 0, 0 };
@@ -133,17 +133,79 @@ namespace SlidingTiles
 			meta[0] = new byte[] { 2, 2 };
 
             int resultado=0;
-            //suma de distancias
-            for (int i = 0; i < 3; i++)
+			byte[,] estadoActual = a.Tablero; //deja de ser un tablero fijo.
+
+
+			//suma de distancias
+			for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    var posicion = meta[estado[i, j]];
+                    var posicion = meta[estadoActual[i, j]];
                     resultado += Math.Abs(i - posicion[0]) + Math.Abs(j - posicion[1]);
                 }
             }
+
+			return resultado;
 		}
 
+
+		public List<Nodo> BuscarRuta(Nodo origen, Nodo meta)
+		{
+			List<Nodo> abiertos = new List<Nodo>();
+			abiertos.Add(origen); // Iniciar algoritmo con el nodo inicial.
+			HashSet<Nodo> cerrados = new HashSet<Nodo>();
+
+			origen.G = 0;
+			origen.H = Euristica(origen);
+
+			while (abiertos.Count > 0)
+			{
+				var actual = abiertos.OrderBy(x => x.F).First();
+
+				if (actual.Tablero == meta.Tablero)
+				{
+					var ruta = new List<Nodo>();
+					while (actual != null)
+					{
+						ruta.Add(actual);
+						actual = actual.Padre;
+					}
+
+					ruta.Reverse();
+					return ruta;
+				}
+
+				abiertos.Remove(actual);
+				cerrados.Add(actual);
+
+				var sucesores = actual.GenerarSucesores(actual);
+
+				foreach (var sucesor in sucesores)
+				{
+					if (cerrados.Contains(sucesor))
+					{
+						continue; //se salta si ya fue evaluado.
+					}
+
+					int g = actual.G + 1;
+
+					if (g < sucesor.G || !abiertos.Contains(sucesor))
+					{
+						sucesor.G = g;
+						sucesor.H = Euristica(sucesor);
+						sucesor.Padre = actual;
+
+						if (!abiertos.Contains(sucesor))
+						{
+							abiertos.Add(sucesor);
+						}
+					}
+				}
+			}
+
+			return null;
+		}
 
 	}
 }
